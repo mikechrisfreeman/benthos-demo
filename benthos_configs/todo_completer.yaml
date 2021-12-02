@@ -1,0 +1,34 @@
+input:
+  label: ""
+  kafka:
+    addresses:
+      - kafka:9092
+    topics: 
+      - todo_create
+    target_version: 1.0.0
+    consumer_group: benthos_consumer_group
+    client_id: benthos_kafka_input
+    checkpoint_limit: 1
+
+pipeline:
+  processors:
+    - bloblang: | 
+        root = this        
+        root.Done = true
+        root.EnrichmentText = "Enriched, I could have been more creative"
+
+output:
+  label: ""
+  http_client:
+    url: 'http://kafka-api:80/todo/${! json("Id") }'
+    verb: PUT
+    headers:
+      Content-Type: application/json
+    rate_limit: ""
+    timeout: 5s
+    max_in_flight: 1
+
+logger:
+  level: INFO
+  static_fields:
+    '@service': benthos

@@ -1,0 +1,11 @@
+#docker run --rm -it -v $pwd\benthos_configs\basic_std_config.yaml:/benthos.yaml jeffail/benthos
+
+input:
+  type: stdin
+
+pipeline:
+  processors:
+    - bloblang: root = content() + "was here"
+
+output:
+  type: stdout
